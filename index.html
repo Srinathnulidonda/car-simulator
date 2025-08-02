@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realistic Car Driving Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <h1>🚗 Car Simulator</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p id="loadingText">Loading 3D World...</p>
+            <div id="loadingDetails" style="margin-top: 20px; font-size: 12px; color: #ccc;"></div>
+        </div>
+    </div>
+
+    <!-- Main Game Container -->
+    <div id="gameContainer" class="game-container" style="display: none;">
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <!-- HUD Elements -->
+    <div id="gameHUD" class="hud-container" style="display: none;">
+        <!-- Speedometer -->
+        <div class="speedometer">
+            <div class="speed-display">
+                <span id="speedValue">0</span>
+                <span class="unit">KM/H</span>
+            </div>
+            <div class="rpm-display">
+                <span id="rpmValue">800</span>
+                <span class="unit">RPM</span>
+            </div>
+        </div>
+
+        <!-- Gear Indicator -->
+        <div class="gear-indicator">
+            <span id="gearValue">1</span>
+        </div>
+
+        <!-- Fuel Gauge -->
+        <div class="fuel-gauge">
+            <div class="fuel-level" id="fuelLevel"></div>
+            <span class="fuel-text">FUEL</span>
+        </div>
+
+        <!-- Minimap -->
+        <div class="minimap">
+            <canvas id="minimapCanvas" width="150" height="150"></canvas>
+            <div class="minimap-label">MAP</div>
+        </div>
+
+        <!-- Mirror Controls (FPP Only) -->
+        <div id="mirrorControls" class="mirror-controls">
+            <h4>🪞 Mirror Adjust</h4>
+            <div class="mirror-group">
+                <label>Left Mirror</label>
+                <input type="range" id="leftMirrorH" min="-30" max="30" value="0">
+                <input type="range" id="leftMirrorV" min="-20" max="20" value="0">
+            </div>
+            <div class="mirror-group">
+                <label>Rear Mirror</label>
+                <input type="range" id="rearMirrorH" min="-20" max="20" value="0">
+                <input type="range" id="rearMirrorV" min="-15" max="15" value="0">
+            </div>
+            <div class="mirror-group">
+                <label>Right Mirror</label>
+                <input type="range" id="rightMirrorH" min="-30" max="30" value="0">
+                <input type="range" id="rightMirrorV" min="-20" max="20" value="0">
+            </div>
+            <button onclick="resetMirrors()">Reset All</button>
+        </div>
+
+        <!-- Seat Adjustment (FPP Only) -->
+        <div id="seatControls" class="seat-controls">
+            <h4>💺 Seat Adjust</h4>
+            <div class="seat-group">
+                <label>Height</label>
+                <input type="range" id="seatHeight" min="-0.3" max="0.3" step="0.1" value="0">
+            </div>
+            <div class="seat-group">
+                <label>Distance</label>
+                <input type="range" id="seatDistance" min="-0.5" max="0.3" step="0.1" value="0">
+            </div>
+            <button onclick="resetSeat()">Reset Position</button>
+        </div>
+
+        <!-- Weather & Time Controls -->
+        <div class="weather-controls">
+            <h4>🌤️ Environment</h4>
+            <select id="weatherSelect">
+                <option value="clear">Clear</option>
+                <option value="rain">Rain</option>
+                <option value="fog">Fog</option>
+                <option value="night">Night</option>
+            </select>
+            <div class="weather-info">
+                <span id="weatherStatus">Clear Day</span>
+            </div>
+        </div>
+
+        <!-- Controls Guide -->
+        <div class="controls-guide">
+            <h4>🎮 Controls</h4>
+            <div class="control-item">WASD: Drive</div>
+            <div class="control-item">Space: Brake</div>
+            <div class="control-item">Shift: Boost</div>
+            <div class="control-item">C: Toggle Camera</div>
+            <div class="control-item">Mouse: Look (FPP)</div>
+            <div class="control-item">F: Enter Shop</div>
+            <div class="control-item">G: Gear Up</div>
+            <div class="control-item">B: Gear Down</div>
+        </div>
+    </div>
+
+    <!-- Shop Interface -->
+    <div id="shopInterface" class="shop-interface">
+        <div class="shop-content">
+            <h2 id="shopTitle">⛽ Gas Station</h2>
+            <div class="shop-options">
+                <div class="shop-item">
+                    <span>Refuel Tank</span>
+                    <button onclick="refuelCar()">$50</button>
+                </div>
+                <div class="shop-item">
+                    <span>Repair Damage</span>
+                    <button onclick="repairCar()">$100</button>
+                </div>
+                <div class="shop-item">
+                    <span>Paint Job</span>
+                    <button onclick="paintCar()">$200</button>
+                </div>
+                <div class="shop-item">
+                    <span>Engine Upgrade</span>
+                    <button onclick="upgradeEngine()">$500</button>
+                </div>
+                <div class="shop-item">
+                    <span>Tire Upgrade</span>
+                    <button onclick="upgradeTires()">$300</button>
+                </div>
+            </div>
+            <div class="shop-footer">
+                <span>Money: $<span id="playerMoney">1000</span></span>
+                <button onclick="exitShop()">Exit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"></script>
+
+    <!-- Game Scripts -->
+    <script src="scripts/game-standalone.js"></script>
+
+    <!-- Error Handling -->
+    <script>
+        window.addEventListener('error', function (e) {
+            console.error('Game Error:', e.error);
+            document.getElementById('loadingText').textContent = 'Error loading game: ' + e.message;
+            document.getElementById('loadingDetails').textContent = 'Please refresh the page or check console for details.';
+        });
+
+        window.addEventListener('unhandledrejection', function (e) {
+            console.error('Unhandled Promise Rejection:', e.reason);
+            document.getElementById('loadingText').textContent = 'Loading error: ' + e.reason;
+        });
+    </script>
+</body>
+
+</html>

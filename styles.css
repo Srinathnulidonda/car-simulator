@@ -1,0 +1,461 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+    background: #000;
+    color: white;
+}
+
+/* Loading Screen */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+}
+
+.loading-content h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.progress-bar {
+    width: 300px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88, #00ccff);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* Game Container */
+.game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* HUD Container */
+.hud-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.hud-container>* {
+    pointer-events: all;
+}
+
+/* Speedometer */
+.speedometer {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, #1a1a1a 30%, #333 100%);
+    border-radius: 50%;
+    border: 3px solid #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+.speed-display {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.rpm-display {
+    font-size: 12px;
+    color: #ccc;
+    margin-top: 5px;
+}
+
+.unit {
+    font-size: 10px;
+    color: #999;
+}
+
+/* Gear Indicator */
+.gear-indicator {
+    position: absolute;
+    bottom: 200px;
+    right: 80px;
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #fff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Fuel Gauge */
+.fuel-gauge {
+    position: absolute;
+    bottom: 30px;
+    right: 200px;
+    width: 20px;
+    height: 100px;
+    background: #333;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.fuel-level {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(to top, #ff0000 0%, #ffff00 50%, #00ff00 100%);
+    transition: height 0.3s ease;
+    height: 100%;
+}
+
+.fuel-text {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: white;
+}
+
+/* Minimap */
+.minimap {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: 150px;
+    height: 150px;
+    border: 2px solid white;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+}
+
+.minimap-label {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: white;
+}
+
+/* Mirror Controls */
+.mirror-controls {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 15px;
+    border-radius: 10px;
+    min-width: 200px;
+    display: none;
+}
+
+.mirror-controls.active {
+    display: block;
+}
+
+.mirror-group {
+    margin: 10px 0;
+}
+
+.mirror-group label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: #ccc;
+}
+
+.mirror-group input[type="range"] {
+    width: 100%;
+    margin: 2px 0;
+}
+
+/* Seat Controls */
+.seat-controls {
+    position: absolute;
+    top: 250px;
+    left: 30px;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 15px;
+    border-radius: 10px;
+    min-width: 200px;
+    display: none;
+}
+
+.seat-controls.active {
+    display: block;
+}
+
+.seat-group {
+    margin: 10px 0;
+}
+
+.seat-group label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: #ccc;
+}
+
+.seat-group input[type="range"] {
+    width: 100%;
+}
+
+/* Weather Controls */
+.weather-controls {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    min-width: 150px;
+}
+
+.weather-controls h4 {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.weather-controls select {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+    background: #333;
+    color: white;
+}
+
+.weather-info {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #ccc;
+}
+
+/* Controls Guide */
+.controls-guide {
+    position: absolute;
+    bottom: 200px;
+    left: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    min-width: 200px;
+}
+
+.controls-guide h4 {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.control-item {
+    font-size: 11px;
+    margin: 3px 0;
+    color: #ccc;
+}
+
+/* Shop Interface */
+.shop-interface {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+}
+
+.shop-interface.active {
+    display: flex;
+}
+
+.shop-content {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.shop-content h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ecf0f1;
+}
+
+.shop-options {
+    margin: 20px 0;
+}
+
+.shop-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shop-item span {
+    color: #bdc3c7;
+}
+
+.shop-item button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.shop-item button:hover {
+    background: #2980b9;
+}
+
+.shop-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shop-footer button {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.shop-footer button:hover {
+    background: #c0392b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .speedometer {
+        width: 100px;
+        height: 100px;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .speed-display {
+        font-size: 18px;
+    }
+
+    .mirror-controls,
+    .seat-controls,
+    .controls-guide {
+        font-size: 10px;
+        padding: 10px;
+        min-width: 150px;
+    }
+
+    .shop-content {
+        padding: 20px;
+        margin: 20px;
+    }
+}
+
+/* Button Styling */
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin: 5px 2px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* Range Input Styling */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 5px;
+    background: #333;
+    outline: none;
+    border-radius: 5px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #007bff;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: #007bff;
+    cursor: pointer;
+    border-radius: 50%;
+    border: none;
+}
